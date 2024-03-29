@@ -3,10 +3,10 @@ import { DDeliverTxResponse, DEncodeObject, TQueryLibrary, TTxLibrary  } from '@
 import { ISignAndBroadcastOptions } from '@/interfaces'
 
 /**
- * @interface IJackalSigningStargateClient
+ * @interface IIbcSigningStargateClient
  * @extends SigningStargateClient - [More here](https://cosmos.github.io/cosmjs/latest/stargate/classes/SigningStargateClient.html)
- * @property {TQueryExtensions} queries
- * @property {ITxLibrary} txLibrary
+ * @property {TQueryLibrary} queries
+ * @property {TTxLibrary} txLibrary
  * @property {selfSignAndBroadcast} selfSignAndBroadcast
  */
 export interface IIbcSigningStargateClient
