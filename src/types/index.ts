@@ -1,1 +1,2 @@
-export * from '@/types/TSAMPLE'
+export * from '@/types/stockCosmos'
+export * from '@/types/TClientDefs'

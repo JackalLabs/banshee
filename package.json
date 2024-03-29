@@ -41,7 +41,13 @@
     "url": "https://github.com/JackalLabs/banshee/issues"
   },
   "homepage": "https://github.com/JackalLabs/banshee/#README",
-  "dependencies": {},
+  "dependencies": {
+    "@cosmjs/amino": "^0.32.3",
+    "@cosmjs/launchpad": "^0.27.1",
+    "@cosmjs/proto-signing": "^0.32.3",
+    "@cosmjs/stargate": "^0.32.3",
+    "@cosmjs/tendermint-rpc": "^0.32.3"
+  },
   "devDependencies": {
     "@btmills/prettier": "3.0.3",
     "@rollup/plugin-commonjs": "^25.0.7",
