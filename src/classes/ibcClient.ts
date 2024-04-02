@@ -5,7 +5,7 @@ import { createDefaultRegistry } from '@/utils/registry'
 import { processExtensions } from '@/utils/extensions'
 import type { OfflineSigner } from '@cosmjs/launchpad'
 import type { ISignAndBroadcastOptions } from '@/interfaces/ISignAndBroadcastOptions'
-import type { DDeliverTxResponse, DEncodeObject, DHttpEndpoint, TTxLibrary, TQueryLibrary } from '@/types'
+import type { DDeliverTxResponse, DEncodeObject, DHttpEndpoint, TQueryLibrary, TTxLibrary } from '@/types'
 import type { IExtendedSigningStargateClientOptions, IIbcSigningStargateClient } from '@/interfaces'
 
 /**
@@ -26,10 +26,7 @@ export class IbcSigningStargateClient
     options: IExtendedSigningStargateClientOptions,
   ) {
     super(tmClient, signer, options)
-    const {
-      queryExtensions = [],
-      txLibrary = {}
-    } = options
+    const { queryExtensions = [], txLibrary = {} } = options
     this.address = address
     this.queries = processExtensions(tmClient, queryExtensions)
     this.txLibrary = txLibrary
@@ -94,7 +91,7 @@ export class IbcSigningStargateClient
 }
 
 interface Listener<T> {
-  next: (x: T) => void;
-  error: (err: any) => void;
-  complete: () => void;
+  next: (x: T) => void
+  error: (err: any) => void
+  complete: () => void
 }

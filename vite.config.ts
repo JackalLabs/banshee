@@ -27,6 +27,10 @@ export default defineConfig({
         find: "@",
         replacement: resolve(__dirname, "./src"),
       },
+      {
+        find: "function-bind",
+        replacement: resolve(__dirname, "./node_modules", "function-bind", "implementation.js"),
+      },
     ],
     extensions: ['.ts']
   },

@@ -2,8 +2,30 @@ import { QueryClient } from '@cosmjs/stargate'
 import type { Tendermint34Client } from '@cosmjs/tendermint-rpc'
 import type { TCreateExtension, TQueryLibrary } from '@/types'
 
-export function processExtensions(tmClient: Tendermint34Client, ex: TCreateExtension[]): TQueryLibrary {
-  const [ aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo, pp, qq, rr ] = ex
+export function processExtensions(
+  tmClient: Tendermint34Client,
+  ex: TCreateExtension[],
+): TQueryLibrary {
+  const [
+    aa,
+    bb,
+    cc,
+    dd,
+    ee,
+    ff,
+    gg,
+    hh,
+    ii,
+    jj,
+    kk,
+    ll,
+    mm,
+    nn,
+    oo,
+    pp,
+    qq,
+    rr,
+  ] = ex
   switch (ex.length) {
     case 0:
       return QueryClient.withExtensions(tmClient) as TQueryLibrary
@@ -22,27 +44,192 @@ export function processExtensions(tmClient: Tendermint34Client, ex: TCreateExten
     case 7:
       return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg)
     case 8:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+      )
     case 9:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+      )
     case 10:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+      )
     case 11:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+      )
     case 12:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+      )
     case 13:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+      )
     case 14:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+        nn,
+      )
     case 15:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+        nn,
+        oo,
+      )
     case 16:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo, pp)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+        nn,
+        oo,
+        pp,
+      )
     case 17:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo, pp, qq)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+        nn,
+        oo,
+        pp,
+        qq,
+      )
     case 18:
-      return QueryClient.withExtensions(tmClient, aa, bb, cc, dd, ee, ff, gg, hh, ii, jj, kk, ll, mm, nn, oo, pp, qq, rr)
+      return QueryClient.withExtensions(
+        tmClient,
+        aa,
+        bb,
+        cc,
+        dd,
+        ee,
+        ff,
+        gg,
+        hh,
+        ii,
+        jj,
+        kk,
+        ll,
+        mm,
+        nn,
+        oo,
+        pp,
+        qq,
+        rr,
+      )
     default:
       throw new Error('Too many extensions')
   }

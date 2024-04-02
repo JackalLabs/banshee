@@ -9,8 +9,7 @@ import { ISignAndBroadcastOptions } from '@/interfaces'
  * @property {TTxLibrary} txLibrary
  * @property {selfSignAndBroadcast} selfSignAndBroadcast
  */
-export interface IIbcSigningStargateClient
-  extends SigningStargateClient {
+export interface IIbcSigningStargateClient extends SigningStargateClient {
   readonly queries: TQueryLibrary
   readonly txLibrary: TTxLibrary
 
