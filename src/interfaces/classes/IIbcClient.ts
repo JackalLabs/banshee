@@ -1,5 +1,5 @@
 import { SigningStargateClient } from '@cosmjs/stargate'
-import { DDeliverTxResponse, DEncodeObject, TQueryLibrary, TTxLibrary  } from '@/types'
+import { DDeliverTxResponse, DEncodeObject, type DHttpEndpoint, TQueryLibrary, TTxLibrary } from '@/types'
 import { ISignAndBroadcastOptions } from '@/interfaces'
 
 /**
@@ -13,6 +13,8 @@ export interface IIbcSigningStargateClient
   extends SigningStargateClient {
   readonly queries: TQueryLibrary
   readonly txLibrary: TTxLibrary
+
+  test(wsEndpoint: string | DHttpEndpoint): Promise<void>
 
   /**
    * @function selfSignAndBroadcast

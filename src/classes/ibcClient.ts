@@ -1,5 +1,6 @@
 import { SigningStargateClient } from '@cosmjs/stargate'
-import { Tendermint34Client } from '@cosmjs/tendermint-rpc'
+import { Tendermint34Client, TxEvent } from '@cosmjs/tendermint-rpc'
+import { Stream } from 'xstream'
 import { createDefaultRegistry } from '@/utils/registry'
 import { processExtensions } from '@/utils/extensions'
 import type { OfflineSigner } from '@cosmjs/launchpad'
@@ -47,6 +48,7 @@ export class IbcSigningStargateClient
   ): Promise<IbcSigningStargateClient> {
     try {
       const tmClient = await Tendermint34Client.connect(endpoint)
+
       const { address } = (await signer.getAccounts())[0]
       const { customModules = [] } = options
       return new IbcSigningStargateClient(tmClient, signer, address, {
@@ -58,20 +60,41 @@ export class IbcSigningStargateClient
     }
   }
 
+  async test(wsEndpoint: string | DHttpEndpoint): Promise<void> {
+    const listener: Listener<TxEvent> = {
+      next: (value: TxEvent) => {
+        console.log('The Stream gave me a value:')
+        console.dir(value)
+      },
+      error: (err: any) => {
+        console.error('The Stream gave me an error:', err)
+      },
+      complete: () => {
+        console.log('The Stream told me it is done.')
+      },
+    }
+    const wsClient = await Tendermint34Client.connect(wsEndpoint)
+    const sub = wsClient.subscribeTx() as Stream<TxEvent>
+    sub.addListener(listener)
+  }
+
   async selfSignAndBroadcast(
     msgs: DEncodeObject[],
     options: ISignAndBroadcastOptions = {},
   ): Promise<DDeliverTxResponse> {
-    const { fee, memo } = {
+    const { fee, memo, timeoutHeight } = {
       fee: {
         amount: [],
         gas: (msgs.length * 100000).toString(),
       },
-      memo: '',
       ...options,
     }
-    return this.signAndBroadcast(this.address, msgs, fee, memo)
+    return this.signAndBroadcast(this.address, msgs, fee, memo, timeoutHeight)
   }
 }
 
-
+interface Listener<T> {
+  next: (x: T) => void;
+  error: (err: any) => void;
+  complete: () => void;
+}
