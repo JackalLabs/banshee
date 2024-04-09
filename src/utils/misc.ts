@@ -1,3 +1,6 @@
+import type { TPossibleTxEvents } from '@/types'
+import type { IIbcBundle, IListener } from '@/interfaces'
+
 const oneSecondMs = 1000
 
 /**
@@ -40,4 +43,25 @@ export async function setDelay(seconds: number): Promise<void> {
  */
 export function secondToMS(seconds: number): number {
   return seconds * oneSecondMs
+}
+
+/**
+ * Build Listener instance for attaching to websocket.
+ * @param {IIbcBundle<T>} bundle
+ * @returns {IListener<TPossibleTxEvents>}
+ */
+export function makeListener<T extends TPossibleTxEvents>(
+  bundle: IIbcBundle<T>,
+): IListener<TPossibleTxEvents> {
+  return {
+    next(value: T): void {
+      bundle.feed.push(value)
+    },
+    error(err: any): void {
+      console.error(`Stream ${bundle.chainId} gave me an error:`, err)
+    },
+    complete(): void {
+      console.log(`Stream ${bundle.chainId} told me it is done.`)
+    },
+  }
 }

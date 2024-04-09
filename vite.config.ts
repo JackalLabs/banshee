@@ -31,12 +31,16 @@ export default defineConfig({
         find: "function-bind",
         replacement: resolve(__dirname, "./node_modules", "function-bind", "implementation.js"),
       },
+      {
+        find: "symbol-observable/ponyfill",
+        replacement: resolve(__dirname, "./node_modules", "symbol-observable", "ponyfill.js"),
+      },
     ],
     extensions: ['.ts']
   },
   build: {
     manifest: true,
-    minify: true,
+    minify: false,
     reportCompressedSize: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
@@ -45,7 +49,9 @@ export default defineConfig({
       name: 'Banshee'
     },
     rollupOptions: {
-      external: [],
+      external: [
+        /@cosmjs.*/,
+      ],
       plugins: [
         typescriptPaths({
           absolute: false,

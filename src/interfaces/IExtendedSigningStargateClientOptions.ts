@@ -4,6 +4,7 @@ import { TCreateExtension, TCustomModuleMap, TTxLibrary } from '@/types/TClientD
 /**
  * ExtendedSigningStargateClientOptions declaration
  * @interface IExtendedSigningStargateClientOptions
+ * @property {TCustomModuleMap[]} [customModules] - Array of Custom Module Maps.
  * @property {TCreateExtension[]} [queryExtensions] - Array of functions to generate query extensions.
  * @property {TTxLibrary} [txLibrary] - Library of tx msg encoders.
  *

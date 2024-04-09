@@ -101,6 +101,8 @@ export type DEncodeObject = Documentation<
 
 /**
  * HttpEndpoint Documentation
+ *
+ * HttpEndpoint defines a http endpoint and associated headers in a reusable format.
  * @prop {string} url - The URL of the HTTP endpoint.
  * @prop {Record<string, string>} headers - HTTP headers that are sent with every request.
  */

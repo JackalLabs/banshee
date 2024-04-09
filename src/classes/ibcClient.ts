@@ -1,12 +1,20 @@
 import { SigningStargateClient } from '@cosmjs/stargate'
-import { Tendermint34Client, TxEvent } from '@cosmjs/tendermint-rpc'
-import { Stream } from 'xstream'
+import { CometClient, connectComet } from '@cosmjs/tendermint-rpc'
 import { createDefaultRegistry } from '@/utils/registry'
 import { processExtensions } from '@/utils/extensions'
+import { makeListener } from '@/utils/misc'
+import type { Stream } from 'xstream'
 import type { OfflineSigner } from '@cosmjs/launchpad'
 import type { ISignAndBroadcastOptions } from '@/interfaces/ISignAndBroadcastOptions'
-import type { DDeliverTxResponse, DEncodeObject, DHttpEndpoint, TQueryLibrary, TTxLibrary } from '@/types'
-import type { IExtendedSigningStargateClientOptions, IIbcSigningStargateClient } from '@/interfaces'
+import type {
+  DDeliverTxResponse,
+  DEncodeObject,
+  DHttpEndpoint,
+  TPossibleTxEvents,
+  TQueryLibrary,
+  TTxLibrary
+} from '@/types'
+import type { IExtendedSigningStargateClientOptions, IIbcBundle, IIbcSigningStargateClient } from '@/interfaces'
 
 /**
  * @class {IIbcSigningStargateClient} IbcSigningStargateClient
@@ -18,9 +26,11 @@ export class IbcSigningStargateClient
   public readonly queries: TQueryLibrary
   public readonly txLibrary: TTxLibrary
   protected readonly address: string
+  protected readonly wsConnections: Record<string, CometClient>
+  protected readonly activeStreams: Record<string, Stream<TPossibleTxEvents>>
 
   protected constructor(
-    tmClient: Tendermint34Client,
+    tmClient: CometClient,
     signer: OfflineSigner,
     address: string,
     options: IExtendedSigningStargateClientOptions,
@@ -30,6 +40,9 @@ export class IbcSigningStargateClient
     this.address = address
     this.queries = processExtensions(tmClient, queryExtensions)
     this.txLibrary = txLibrary
+
+    this.wsConnections = {}
+    this.activeStreams = {}
   }
 
   /**
@@ -44,11 +57,11 @@ export class IbcSigningStargateClient
     options: IExtendedSigningStargateClientOptions = {},
   ): Promise<IbcSigningStargateClient> {
     try {
-      const tmClient = await Tendermint34Client.connect(endpoint)
+      const client = await connectComet(endpoint)
 
       const { address } = (await signer.getAccounts())[0]
       const { customModules = [] } = options
-      return new IbcSigningStargateClient(tmClient, signer, address, {
+      return new IbcSigningStargateClient(client, signer, address, {
         registry: createDefaultRegistry(customModules),
         ...options,
       })
@@ -57,22 +70,50 @@ export class IbcSigningStargateClient
     }
   }
 
-  async test(wsEndpoint: string | DHttpEndpoint): Promise<void> {
-    const listener: Listener<TxEvent> = {
-      next: (value: TxEvent) => {
-        console.log('The Stream gave me a value:')
-        console.dir(value)
-      },
-      error: (err: any) => {
-        console.error('The Stream gave me an error:', err)
-      },
-      complete: () => {
-        console.log('The Stream told me it is done.')
-      },
+  async monitor<T extends TPossibleTxEvents>(
+    connections: IIbcBundle<T> | IIbcBundle<T>[],
+  ): Promise<void> {
+    try {
+      if (connections instanceof Array) {
+        for (let conn of connections) {
+          if (!this.wsConnections[conn.chainId]) {
+            this.wsConnections[conn.chainId] = await connectComet(conn.endpoint)
+          }
+          if (!this.activeStreams[conn.chainId]) {
+            this.activeStreams[conn.chainId] = this.wsConnections[
+              conn.chainId
+            ].subscribeTx() as Stream<TPossibleTxEvents>
+          }
+          this.activeStreams[conn.chainId].addListener(makeListener<T>(conn))
+        }
+      } else {
+        if (!this.wsConnections[connections.chainId]) {
+          this.wsConnections[connections.chainId] = await connectComet(
+            connections.endpoint,
+          )
+        }
+        if (!this.activeStreams[connections.chainId]) {
+          this.activeStreams[connections.chainId] = this.wsConnections[
+            connections.chainId
+          ].subscribeTx() as Stream<TPossibleTxEvents>
+        }
+        this.activeStreams[connections.chainId].addListener(
+          makeListener<T>(connections),
+        )
+      }
+    } catch (err) {
+      throw err
     }
-    const wsClient = await Tendermint34Client.connect(wsEndpoint)
-    const sub = wsClient.subscribeTx() as Stream<TxEvent>
-    sub.addListener(listener)
+  }
+
+  disengage(connections: string | string[]): void {
+    if (connections instanceof Array) {
+      for (let conn of connections) {
+        delete this.wsConnections[conn]
+      }
+    } else {
+      delete this.wsConnections[connections]
+    }
   }
 
   async selfSignAndBroadcast(
@@ -88,10 +129,4 @@ export class IbcSigningStargateClient
     }
     return this.signAndBroadcast(this.address, msgs, fee, memo, timeoutHeight)
   }
-}
-
-interface Listener<T> {
-  next: (x: T) => void
-  error: (err: any) => void
-  complete: () => void
 }

@@ -1,9 +1,9 @@
 import { QueryClient } from '@cosmjs/stargate'
-import type { Tendermint34Client } from '@cosmjs/tendermint-rpc'
+import { CometClient } from '@cosmjs/tendermint-rpc'
 import type { TCreateExtension, TQueryLibrary } from '@/types'
 
 export function processExtensions(
-  tmClient: Tendermint34Client,
+  tmClient: CometClient,
   ex: TCreateExtension[],
 ): TQueryLibrary {
   const [
