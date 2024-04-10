@@ -13,6 +13,8 @@ import { TCreateExtension, TCustomModuleMap, TTxLibrary } from '@/types/TClientD
  * @property {number} [broadcastTimeoutMs]
  * @property {number} [broadcastPollIntervalMs]
  * @property {GasPrice} [gasPrice]
+ *
+ * @property {AccountParser} [accountParser]
  */
 export interface IExtendedSigningStargateClientOptions
   extends SigningStargateClientOptions {

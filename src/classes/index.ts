@@ -1,1 +1,3 @@
-export * from '@/classes/ibcClient'
+export * from '@/classes/ibcQueryClient'
+export * from '@/classes/ibcSigningClient'
+export * from '@/classes/websocketCore'
