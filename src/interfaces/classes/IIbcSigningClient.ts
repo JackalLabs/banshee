@@ -1,5 +1,5 @@
 import type {SigningStargateClient} from '@cosmjs/stargate'
-import type {DDeliverTxResponse, DEncodeObject, TQueryLibrary, TTxLibrary} from '@/types'
+import type { DDeliverTxResponse, DEncodeObject, TQueryLibrary, TTxLibrary } from '@/types'
 import type {ISignAndBroadcastOptions, IWebsocketCore} from '@/interfaces'
 
 /**
@@ -9,11 +9,11 @@ import type {ISignAndBroadcastOptions, IWebsocketCore} from '@/interfaces'
  * @property {TTxLibrary} txLibrary
  * @property {selfSignAndBroadcast} selfSignAndBroadcast
  */
-export interface IIbcSigningClient
-    extends SigningStargateClient,
-        IWebsocketCore {
-    readonly queries: TQueryLibrary
-    readonly txLibrary: TTxLibrary
+export interface IIbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
+  extends SigningStargateClient,
+    IWebsocketCore {
+    readonly queries: TQ
+    readonly txLibrary: TT
 
     /**
      * @function selfSignAndBroadcast

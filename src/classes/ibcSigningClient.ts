@@ -18,11 +18,11 @@ import type {IExtendedSigningStargateClientOptions, IIbcBundle, IIbcSigningClien
 /**
  * @class {IIbcSigningClient} IbcSigningClient
  */
-export class IbcSigningClient
+export class IbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
     extends SigningStargateClient
-    implements IIbcSigningClient {
-    public readonly queries: TQueryLibrary
-    public readonly txLibrary: TTxLibrary
+    implements IIbcSigningClient<TQ, TT> {
+    public readonly queries: TQ
+    public readonly txLibrary: TT
     protected readonly address: string
     protected readonly wsCore: IWebsocketCore
 
@@ -35,8 +35,8 @@ export class IbcSigningClient
         super(tmClient, signer, options)
         const {queryExtensions = [], txLibrary = {}} = options
         this.address = address
-        this.queries = processExtensions(tmClient, queryExtensions)
-        this.txLibrary = txLibrary
+        this.queries = processExtensions(tmClient, queryExtensions) as TQ
+        this.txLibrary = txLibrary as TT
         this.wsCore = new WebsocketCore()
     }
 
@@ -46,16 +46,16 @@ export class IbcSigningClient
      * @async
      * @static
      */
-    public static async connectWithSigner(
-        endpoint: string | DHttpEndpoint,
-        signer: OfflineSigner,
-        options: IExtendedSigningStargateClientOptions = {},
-    ): Promise<IIbcSigningClient> {
+    public static async connectWithSigner<TQ extends TQueryLibrary, TT extends TTxLibrary> (
+      endpoint: string | DHttpEndpoint,
+      signer: OfflineSigner,
+      options: IExtendedSigningStargateClientOptions = {},
+    ): Promise<IIbcSigningClient<TQ, TT>> {
         try {
             const client = await connectComet(endpoint)
             const {address} = (await signer.getAccounts())[0]
             const {customModules = []} = options
-            return new IbcSigningClient(client, signer, address, {
+            return new IbcSigningClient<TQ, TT>(client, signer, address, {
                 registry: createDefaultRegistry(customModules),
                 ...options,
             })

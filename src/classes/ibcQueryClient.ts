@@ -9,8 +9,8 @@ import type { TPossibleTxEvents, TQueryLibrary } from '@/types'
 /**
  * @class {IIbcQueryClient} IbcQueryClient
  */
-export class IbcQueryClient extends StargateClient implements IIbcQueryClient {
-  public readonly queries: TQueryLibrary
+export class IbcQueryClient<TQ extends TQueryLibrary> extends StargateClient implements IIbcQueryClient<TQ> {
+  public readonly queries: TQ
   protected readonly wsCore: IWebsocketCore
 
   protected constructor(
@@ -19,7 +19,7 @@ export class IbcQueryClient extends StargateClient implements IIbcQueryClient {
   ) {
     super(tmClient, options)
     const { queryExtensions = [] } = options
-    this.queries = processExtensions(tmClient, queryExtensions)
+    this.queries = processExtensions(tmClient, queryExtensions) as TQ
     this.wsCore = new WebsocketCore()
   }
 
@@ -29,12 +29,12 @@ export class IbcQueryClient extends StargateClient implements IIbcQueryClient {
    * @async
    * @static
    */
-  public static async connect(
+  public static async connect<TQ extends TQueryLibrary>(
     endpoint: string | HttpEndpoint,
     options: IExtendedStargateClientOptions = {},
-  ): Promise<IIbcQueryClient> {
+  ): Promise<IIbcQueryClient<TQ>> {
     const client = await connectComet(endpoint)
-    return new IbcQueryClient(client, options)
+    return new IbcQueryClient<TQ>(client, options)
   }
 
   async monitor<T extends TPossibleTxEvents>(
