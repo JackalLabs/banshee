@@ -25,10 +25,4 @@ export interface IIbcSigningClient
         msgs: DEncodeObject[],
         options?: ISignAndBroadcastOptions,
     ): Promise<DDeliverTxResponse>
-
-  /**
-   * @function getLastBlockHeight
-   * @returns Promise<number>
-   */
-    getLastBlockHeight(): Promise<number>
 }

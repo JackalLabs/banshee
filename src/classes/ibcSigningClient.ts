@@ -87,14 +87,4 @@ export class IbcSigningClient
         }
         return this.signAndBroadcast(this.address, msgs, fee, memo, timeoutHeight)
     }
-
-    async getLastBlockHeight(): Promise<number> {
-        const client = this.forceGetCometClient()
-        const {lastBlockHeight} = await client.abciInfo()
-        if (!lastBlockHeight) {
-            throw new Error('Invalid lastBlockHeight')
-        } else {
-            return lastBlockHeight
-        }
-    }
 }
