@@ -13,7 +13,13 @@ import type {
   TQueryLibrary,
   TTxLibrary
 } from '@/types'
-import type {IExtendedSigningStargateClientOptions, IIbcBundle, IIbcSigningClient, IWebsocketCore} from '@/interfaces'
+import {
+    IExtendedSigningStargateClientOptions, IIbcDeafenBundle,
+    IIbcDisengageBundle,
+    IIbcEngageBundle,
+    IIbcSigningClient,
+    IWebsocketCore
+} from '@/interfaces'
 
 /**
  * @class {IIbcSigningClient} IbcSigningClient
@@ -65,13 +71,17 @@ export class IbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
     }
 
     async monitor<T extends TPossibleTxEvents>(
-        connections: IIbcBundle<T> | IIbcBundle<T>[],
+        connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
     ): Promise<void> {
         await this.wsCore.monitor(connections)
     }
 
-    disengage(connections: string | string[]): void {
+    disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void {
         this.wsCore.disengage(connections)
+    }
+
+    deafen(connection: IIbcDeafenBundle): void {
+        this.wsCore.deafen(connection)
     }
 
     async selfSignAndBroadcast(

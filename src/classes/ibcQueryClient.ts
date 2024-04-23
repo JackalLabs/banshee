@@ -3,7 +3,13 @@ import type { CometClient, HttpEndpoint } from '@cosmjs/tendermint-rpc'
 import { connectComet } from '@cosmjs/tendermint-rpc'
 import { processExtensions } from '@/utils/extensions'
 import { WebsocketCore } from '@/classes'
-import type { IExtendedStargateClientOptions, IIbcBundle, IIbcQueryClient, IWebsocketCore } from '@/interfaces'
+import {
+  IExtendedStargateClientOptions, IIbcDeafenBundle,
+  IIbcDisengageBundle,
+  IIbcEngageBundle,
+  IIbcQueryClient,
+  IWebsocketCore
+} from '@/interfaces'
 import type { TPossibleTxEvents, TQueryLibrary } from '@/types'
 
 /**
@@ -38,12 +44,16 @@ export class IbcQueryClient<TQ extends TQueryLibrary> extends StargateClient imp
   }
 
   async monitor<T extends TPossibleTxEvents>(
-    connections: IIbcBundle<T> | IIbcBundle<T>[],
+    connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
   ): Promise<void> {
     await this.wsCore.monitor(connections)
   }
 
-  disengage(connections: string | string[]): void {
+  disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void {
     this.wsCore.disengage(connections)
+  }
+
+  deafen(connection: IIbcDeafenBundle): void {
+    this.wsCore.deafen(connection)
   }
 }

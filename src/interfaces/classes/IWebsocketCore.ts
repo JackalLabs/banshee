@@ -1,4 +1,4 @@
-import type {IIbcBundle} from '@/interfaces'
+import { IIbcDeafenBundle, IIbcDisengageBundle, IIbcEngageBundle } from '@/interfaces'
 import type {TPossibleTxEvents} from '@/types'
 
 /**
@@ -9,16 +9,22 @@ import type {TPossibleTxEvents} from '@/types'
 export interface IWebsocketCore {
     /**
      * @function monitor
-     * @param {IIbcBundle<T> | IIbcBundle<T>[]} connections
+     * @param {IIbcEngageBundle<T> | IIbcEngageBundle<T>[]} connections
      * @returns {Promise<void>}
      */
     monitor<T extends TPossibleTxEvents>(
-        connections: IIbcBundle<T> | IIbcBundle<T>[],
+        connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
     ): Promise<void>
 
     /**
      * @function disengage
-     * @param {string | string[]} connections
+     * @param {IIbcDisengageBundle | IIbcDisengageBundle[]} connections
      */
-    disengage(connections: string | string[]): void
+    disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void
+
+    /**
+     * @function deafen
+     * @param {IIbcDeafenBundle} connection
+     */
+    deafen(connection: IIbcDeafenBundle): void
 }

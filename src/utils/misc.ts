@@ -1,5 +1,5 @@
 import type { TPossibleTxEvents } from '@/types'
-import type { IIbcBundle, IListener } from '@/interfaces'
+import { IIbcMakeListenerBundle, IListener } from '@/interfaces'
 
 const oneSecondMs = 1000
 
@@ -47,11 +47,11 @@ export function secondToMS(seconds: number): number {
 
 /**
  * Build Listener instance for attaching to websocket.
- * @param {IIbcBundle<T>} bundle
+ * @param {IIbcMakeListenerBundle<T>} bundle
  * @returns {IListener<TPossibleTxEvents>}
  */
 export function makeListener<T extends TPossibleTxEvents>(
-  bundle: IIbcBundle<T>,
+  bundle: IIbcMakeListenerBundle<T>,
 ): IListener<TPossibleTxEvents> {
   return {
     next(value: T): void {
