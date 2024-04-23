@@ -172,7 +172,7 @@ type Modify<T, R extends PartialAny<T>> = Omit<T, keyof R> & R
 
 type ModifyDeep<A, B extends DeepPartialAny<A>> = {
   // https://stackoverflow.com/a/74216680/985454
-  [K in keyof A | keyof B]: /**/ K extends keyof A // For all keys in A and B: ... // ───┐
+  [K in keyof A | keyof B /**/]: K extends keyof A // For all keys in A and B: ... // ───┐
     ? /**/ K extends keyof B // ───n ─ y ? key K exists in both A and B ...
       ? /*  */ A[K] extends AnyObject //    │  ─┴──┐
         ? /*  */ B[K] extends AnyObject //    │  ─── n ─ y ? both A and B are objects ...
@@ -187,7 +187,7 @@ type ModifyDeep<A, B extends DeepPartialAny<A>> = {
 
 type ModifyDeep1<A, B extends DeepPartialAny<A>> = {
   // https://stackoverflow.com/a/74216680/985454
-  [K in keyof A | keyof B]: /**/ K extends keyof A // For all keys in A and B: ... // ───┐
+  [K in keyof A | keyof B /**/]: K extends keyof A // For all keys in A and B: ... // ───┐
     ? /* */ K extends keyof B // ── n ─ y ? key K exists in both A and B ...
       ? /*   */ A[K] extends AnyObject //    │  ─┴──┐
         ? /*     */ B[K] extends AnyObject //    │  ─── n ─ y ? both A and B are objects ...

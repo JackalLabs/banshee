@@ -4,7 +4,8 @@ import { connectComet } from '@cosmjs/tendermint-rpc'
 import { processExtensions } from '@/utils/extensions'
 import { WebsocketCore } from '@/classes'
 import {
-  IExtendedStargateClientOptions, IIbcDeafenBundle,
+  IExtendedStargateClientOptions,
+  IIbcDeafenBundle,
   IIbcDisengageBundle,
   IIbcEngageBundle,
   IIbcQueryClient,
@@ -15,7 +16,10 @@ import type { TPossibleTxEvents, TQueryLibrary } from '@/types'
 /**
  * @class {IIbcQueryClient} IbcQueryClient
  */
-export class IbcQueryClient<TQ extends TQueryLibrary> extends StargateClient implements IIbcQueryClient<TQ> {
+export class IbcQueryClient<TQ extends TQueryLibrary>
+  extends StargateClient
+  implements IIbcQueryClient<TQ>
+{
   public readonly queries: TQ
   protected readonly wsCore: IWebsocketCore
 

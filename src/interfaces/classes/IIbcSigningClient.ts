@@ -1,6 +1,6 @@
-import type {SigningStargateClient} from '@cosmjs/stargate'
+import type { SigningStargateClient } from '@cosmjs/stargate'
 import type { DDeliverTxResponse, DEncodeObject, TQueryLibrary, TTxLibrary } from '@/types'
-import type {ISignAndBroadcastOptions, IWebsocketCore} from '@/interfaces'
+import type { ISignAndBroadcastOptions, IWebsocketCore } from '@/interfaces'
 
 /**
  * @interface IIbcSigningClient
@@ -9,20 +9,22 @@ import type {ISignAndBroadcastOptions, IWebsocketCore} from '@/interfaces'
  * @property {TTxLibrary} txLibrary
  * @property {selfSignAndBroadcast} selfSignAndBroadcast
  */
-export interface IIbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
-  extends SigningStargateClient,
+export interface IIbcSigningClient<
+  TQ extends TQueryLibrary,
+  TT extends TTxLibrary,
+> extends SigningStargateClient,
     IWebsocketCore {
-    readonly queries: TQ
-    readonly txLibrary: TT
+  readonly queries: TQ
+  readonly txLibrary: TT
 
-    /**
-     * @function selfSignAndBroadcast
-     * @param {DEncodeObject[]} msgs
-     * @param {ISignAndBroadcastOptions} [options]
-     * @returns Promise<DDeliverTxResponse>
-     */
-    selfSignAndBroadcast(
-        msgs: DEncodeObject[],
-        options?: ISignAndBroadcastOptions,
-    ): Promise<DDeliverTxResponse>
+  /**
+   * @function selfSignAndBroadcast
+   * @param {DEncodeObject[]} msgs
+   * @param {ISignAndBroadcastOptions} [options]
+   * @returns Promise<DDeliverTxResponse>
+   */
+  selfSignAndBroadcast(
+    msgs: DEncodeObject[],
+    options?: ISignAndBroadcastOptions,
+  ): Promise<DDeliverTxResponse>
 }
