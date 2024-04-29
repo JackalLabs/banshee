@@ -5,8 +5,6 @@ import { processExtensions } from '@/utils/extensions'
 import { WebsocketCore } from '@/classes'
 import {
   IExtendedStargateClientOptions,
-  IIbcDeafenBundle,
-  IIbcDisengageBundle,
   IIbcEngageBundle,
   IIbcQueryClient,
   IWebsocketCore
@@ -51,17 +49,5 @@ export class IbcQueryClient<TQ extends TQueryLibrary>
     connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
   ): Promise<void> {
     await this.wsCore.monitor(connections)
-  }
-
-  disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void {
-    this.wsCore.disengage(connections)
-  }
-
-  deafen(connection: IIbcDeafenBundle): void {
-    this.wsCore.deafen(connection)
-  }
-
-  debug(): void {
-    this.wsCore.debug()
   }
 }

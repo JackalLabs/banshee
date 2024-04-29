@@ -1,5 +1,4 @@
-import type { TPossibleTxEvents } from '@/types'
-import { IIbcMakeListenerBundle, IListener } from '@/interfaces'
+import type { TTidyStringModes } from '@/types'
 
 const oneSecondMs = 1000
 
@@ -46,22 +45,29 @@ export function secondToMS(seconds: number): number {
 }
 
 /**
- * Build Listener instance for attaching to websocket.
- * @param {IIbcMakeListenerBundle<T>} bundle
- * @returns {IListener<TPossibleTxEvents>}
+ *
+ * @param {string} source
+ * @param {string} toTidy
+ * @param {TTidyStringModes} mode
+ * @returns {string}
  */
-export function makeListener<T extends TPossibleTxEvents>(
-  bundle: IIbcMakeListenerBundle<T>,
-): IListener<TPossibleTxEvents> {
-  return {
-    next(value: T): void {
-      bundle.feed.push(value)
-    },
-    error(err: any): void {
-      console.error(`Stream ${bundle.chainId} gave me an error:`, err)
-    },
-    complete(): void {
-      console.log(`Stream ${bundle.chainId} told me it is done.`)
-    },
+export function tidyString(
+  source: string,
+  toTidy: string,
+  mode: TTidyStringModes = 'both',
+): string {
+  let startIndex = 0
+  let endIndex = source.length
+
+  if (mode === 'start' || mode === 'both') {
+    while (startIndex < endIndex && source[startIndex] === toTidy) {
+      startIndex++
+    }
   }
+  if (mode === 'end' || mode === 'both') {
+    while (startIndex < endIndex && source[endIndex - 1] === toTidy) {
+      endIndex--
+    }
+  }
+  return source.slice(startIndex, endIndex)
 }

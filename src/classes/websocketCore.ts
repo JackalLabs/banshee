@@ -1,80 +1,70 @@
-import type { CometClient } from '@cosmjs/tendermint-rpc'
-import { connectComet } from '@cosmjs/tendermint-rpc'
-import type { Stream } from 'xstream'
 import type { TPossibleTxEvents } from '@/types'
 import {
-  IIbcDeafenBundle,
-  IIbcDisengageBundle,
   IIbcEngageBundle,
   IWebsocketCore,
 } from '@/interfaces'
 
+import { Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
+import { tidyString } from '@/utils/misc'
+
 export class WebsocketCore implements IWebsocketCore {
-  protected readonly wsConnections: Record<string, CometClient>
-  protected readonly activeStreams: Record<string, Stream<TPossibleTxEvents>>
+  protected readonly wsConnections: Record<string, WebSocket>
 
   constructor() {
     this.wsConnections = {}
-    this.activeStreams = {}
   }
 
-  async monitor<T extends TPossibleTxEvents>(
+  monitor<T extends TPossibleTxEvents>(
     connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
-  ): Promise<void> {
+  ): void {
     try {
       if (connections instanceof Array) {
         for (let conn of connections) {
-          await this.setupMonitoring<T>(conn)
+          this.setupMonitoring<T>(conn)
         }
       } else {
-        await this.setupMonitoring<T>(connections)
+        this.setupMonitoring<T>(connections)
       }
     } catch (err) {
       throw err
     }
   }
 
-  disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void {
-    if (connections instanceof Array) {
-      for (let conn of connections) {
-        delete this.activeStreams[`${conn.chainId}|${conn.query || 'all'}`]
-      }
-    } else {
-      delete this.activeStreams[
-        `${connections.chainId}|${connections.query || 'all'}`
-      ]
-    }
-  }
-
-  deafen(connection: IIbcDeafenBundle): void {
-    this.activeStreams[
-      `${connection.chainId}|${connection.query || 'all'}`
-    ].removeListener(connection.listener)
-  }
-
-  debug(): void {
-    console.log('wsConnections:', this.wsConnections)
-    console.log('activeStreams:', this.activeStreams)
-  }
-
-  protected async setupMonitoring<T extends TPossibleTxEvents>(
+  protected setupMonitoring<T extends TPossibleTxEvents>(
     conn: IIbcEngageBundle<T>,
-  ) {
+  ): void {
+    if (!conn.endpoint.startsWith('ws://') && !conn.endpoint.startsWith('wss://')) {
+      throw new Error('invalid url')
+    }
+    const cleanEndpoint = tidyString(conn.endpoint, '/')
+    const finalEndpoint = cleanEndpoint.endsWith('websocket') ? cleanEndpoint :  `${cleanEndpoint}/websocket`
     if (!this.wsConnections[conn.chainId]) {
-      this.wsConnections[conn.chainId] = await connectComet(conn.endpoint)
+      this.wsConnections[conn.chainId] = new WebSocket(finalEndpoint)
     }
     const client = this.wsConnections[conn.chainId]
-    const streamId = `${conn.chainId}|${conn.query || 'all'}`
-    if (!this.activeStreams[streamId]) {
-      if (conn.query) {
-        this.activeStreams[streamId] = client.subscribeTx(
-          conn.query,
-        ) as Stream<TPossibleTxEvents>
-      } else {
-        this.activeStreams[streamId] =
-          client.subscribeTx() as Stream<TPossibleTxEvents>
+
+    const wsQuery = {
+      jsonrpc: '2.0',
+      method: 'subscribe',
+      id: Date.now().toString(),
+      params: {
+        query: (conn.query) ? `tm.event = 'Tx' AND '${conn.query}'` : `tm.event = 'Tx'`,
+      },
+    }
+    client.onopen = () => {
+      client.send(JSON.stringify(wsQuery))
+    }
+    client.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data)
+        if (!data.result.data) {
+          return
+        }
+        const postProcess = Responses.decodeTxEvent(data.result)
+        conn.feed.push(postProcess as T)
+      } catch (err) {
+        console.error(err)
       }
     }
-    this.activeStreams[streamId].addListener(conn.listener)
   }
 }

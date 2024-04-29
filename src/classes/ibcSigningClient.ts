@@ -15,8 +15,6 @@ import type {
 } from '@/types'
 import {
   IExtendedSigningStargateClientOptions,
-  IIbcDeafenBundle,
-  IIbcDisengageBundle,
   IIbcEngageBundle,
   IIbcSigningClient,
   IWebsocketCore
@@ -79,18 +77,6 @@ export class IbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
     connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
   ): Promise<void> {
     await this.wsCore.monitor(connections)
-  }
-
-  disengage(connections: IIbcDisengageBundle | IIbcDisengageBundle[]): void {
-    this.wsCore.disengage(connections)
-  }
-
-  deafen(connection: IIbcDeafenBundle): void {
-    this.wsCore.deafen(connection)
-  }
-
-  debug(): void {
-    this.wsCore.debug()
   }
 
   async selfSignAndBroadcast(
