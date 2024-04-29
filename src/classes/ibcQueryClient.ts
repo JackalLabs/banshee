@@ -60,4 +60,8 @@ export class IbcQueryClient<TQ extends TQueryLibrary>
   deafen(connection: IIbcDeafenBundle): void {
     this.wsCore.deafen(connection)
   }
+
+  debug(): void {
+    this.wsCore.debug()
+  }
 }

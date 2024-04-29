@@ -52,6 +52,11 @@ export class WebsocketCore implements IWebsocketCore {
     ].removeListener(connection.listener)
   }
 
+  debug(): void {
+    console.log('wsConnections:', this.wsConnections)
+    console.log('activeStreams:', this.activeStreams)
+  }
+
   protected async setupMonitoring<T extends TPossibleTxEvents>(
     conn: IIbcEngageBundle<T>,
   ) {

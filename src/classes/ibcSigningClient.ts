@@ -89,6 +89,10 @@ export class IbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
     this.wsCore.deafen(connection)
   }
 
+  debug(): void {
+    this.wsCore.debug()
+  }
+
   async selfSignAndBroadcast(
     msgs: DEncodeObject[],
     options: ISignAndBroadcastOptions = {},

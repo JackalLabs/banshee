@@ -27,4 +27,6 @@ export interface IWebsocketCore {
    * @param {IIbcDeafenBundle} connection
    */
   deafen(connection: IIbcDeafenBundle): void
+
+  debug(): void
 }
