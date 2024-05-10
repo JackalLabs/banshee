@@ -1,7 +1,7 @@
 import type { TPossibleTxEvents } from '@/types'
 import {
-  IIbcEngageBundle,
-  IWebsocketCore,
+  IIbcEngageBundle, IIbcFeedBundle,
+  IWebsocketCore
 } from '@/interfaces'
 
 import { Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
@@ -48,7 +48,7 @@ export class WebsocketCore implements IWebsocketCore {
       method: 'subscribe',
       id: Date.now().toString(),
       params: {
-        query: (conn.query) ? `tm.event = 'Tx' AND '${conn.query}'` : `tm.event = 'Tx'`,
+        query: (conn.query) ? `tm.event = 'Tx' AND ${conn.query}` : `tm.event = 'Tx'`,
       },
     }
     client.onopen = () => {
@@ -60,8 +60,12 @@ export class WebsocketCore implements IWebsocketCore {
         if (!data.result.data) {
           return
         }
-        const postProcess = Responses.decodeTxEvent(data.result)
-        conn.feed.push(postProcess as T)
+        const ready = Responses.decodeTxEvent(data.result) as T
+        const postProcess: IIbcFeedBundle<T> = {
+          resp: ready,
+          parsed: conn.parser(ready)
+        }
+        conn.feed.push(postProcess)
       } catch (err) {
         console.error(err)
       }
