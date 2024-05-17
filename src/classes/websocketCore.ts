@@ -1,6 +1,6 @@
 import type { TPossibleTxEvents } from '@/types'
 import {
-  IIbcEngageBundle, IIbcFeedBundle,
+  IIbcEngageBundle,
   IWebsocketCore
 } from '@/interfaces'
 
@@ -61,11 +61,7 @@ export class WebsocketCore implements IWebsocketCore {
           return
         }
         const ready = Responses.decodeTxEvent(data.result) as T
-        const postProcess: IIbcFeedBundle<T> = {
-          resp: ready,
-          parsed: conn.parser(ready)
-        }
-        conn.feed.push(postProcess)
+        conn.feed.push(ready)
       } catch (err) {
         console.error(err)
       }
