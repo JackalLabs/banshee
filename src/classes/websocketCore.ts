@@ -1,8 +1,5 @@
 import type { TPossibleTxEvents } from '@/types'
-import {
-  IIbcEngageBundle,
-  IWebsocketCore
-} from '@/interfaces'
+import { IIbcEngageBundle, IWebsocketCore } from '@/interfaces'
 
 import { Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
 import { tidyString } from '@/utils/misc'
@@ -33,11 +30,16 @@ export class WebsocketCore implements IWebsocketCore {
   protected setupMonitoring<T extends TPossibleTxEvents>(
     conn: IIbcEngageBundle<T>,
   ): void {
-    if (!conn.endpoint.startsWith('ws://') && !conn.endpoint.startsWith('wss://')) {
+    if (
+      !conn.endpoint.startsWith('ws://')
+      && !conn.endpoint.startsWith('wss://')
+    ) {
       throw new Error('invalid url')
     }
     const cleanEndpoint = tidyString(conn.endpoint, '/')
-    const finalEndpoint = cleanEndpoint.endsWith('websocket') ? cleanEndpoint :  `${cleanEndpoint}/websocket`
+    const finalEndpoint = cleanEndpoint.endsWith('websocket')
+      ? cleanEndpoint
+      : `${cleanEndpoint}/websocket`
     if (!this.wsConnections[conn.chainId]) {
       this.wsConnections[conn.chainId] = new WebSocket(finalEndpoint)
     }
@@ -48,7 +50,9 @@ export class WebsocketCore implements IWebsocketCore {
       method: 'subscribe',
       id: Date.now().toString(),
       params: {
-        query: (conn.query) ? `tm.event = 'Tx' AND ${conn.query}` : `tm.event = 'Tx'`,
+        query: conn.query
+          ? `tm.event = 'Tx' AND ${conn.query}`
+          : `tm.event = 'Tx'`,
       },
     }
     client.onopen = () => {

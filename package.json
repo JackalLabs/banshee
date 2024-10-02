@@ -1,6 +1,6 @@
 {
   "name": "@jackallabs/banshee",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Modern problems require modern solutions",
   "keywords": [],
   "exports": {
@@ -62,7 +62,7 @@
     "typedoc": "^0.25.3",
     "typescript": "^5.2.2",
     "vite": "^4.5.0",
-    "vite-plugin-dts": "^3.6.3",
+    "vite-plugin-dts": "^4.2.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "0.34.6"
   }

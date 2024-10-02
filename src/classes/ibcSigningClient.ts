@@ -1,24 +1,20 @@
-import { SigningStargateClient } from '@cosmjs/stargate'
-import { CometClient, connectComet } from '@cosmjs/tendermint-rpc'
-import { createDefaultRegistry } from '@/utils/registry'
-import { processExtensions } from '@/utils/extensions'
-import { WebsocketCore } from '@/classes'
-import type { OfflineSigner } from '@cosmjs/launchpad'
-import type { ISignAndBroadcastOptions } from '@/interfaces/ISignAndBroadcastOptions'
+import {SigningStargateClient} from '@cosmjs/stargate'
+import {CometClient, connectComet} from '@cosmjs/tendermint-rpc'
+import {createDefaultRegistry} from '@/utils/registry'
+import {processExtensions} from '@/utils/extensions'
+import {WebsocketCore} from '@/classes'
+import type {OfflineSigner} from '@cosmjs/launchpad'
+import type {ISignAndBroadcastOptions} from '@/interfaces/ISignAndBroadcastOptions'
 import type {
   DDeliverTxResponse,
   DEncodeObject,
   DHttpEndpoint,
   TPossibleTxEvents,
   TQueryLibrary,
-  TTxLibrary
+  TTxLibrary,
 } from '@/types'
-import {
-  IExtendedSigningStargateClientOptions,
-  IIbcEngageBundle,
-  IIbcSigningClient,
-  IWebsocketCore
-} from '@/interfaces'
+import {IExtendedSigningStargateClientOptions, IIbcEngageBundle, IIbcSigningClient, IWebsocketCore,} from '@/interfaces'
+import {warnError} from '@/utils/misc'
 
 /**
  * @class {IIbcSigningClient} IbcSigningClient
@@ -69,27 +65,35 @@ export class IbcSigningClient<TQ extends TQueryLibrary, TT extends TTxLibrary>
         ...options,
       })
     } catch (err) {
-      throw err
+      throw warnError('IbcSigningClient connectWithSigner()', err)
     }
   }
 
   async monitor<T extends TPossibleTxEvents>(
     connections: IIbcEngageBundle<T> | IIbcEngageBundle<T>[],
   ): Promise<void> {
-    await this.wsCore.monitor(connections)
+    try {
+      await this.wsCore.monitor(connections)
+    } catch (err) {
+      throw warnError('IbcSigningClient monitor()', err)
+    }
   }
 
   async selfSignAndBroadcast(
     msgs: DEncodeObject[],
     options: ISignAndBroadcastOptions = {},
   ): Promise<DDeliverTxResponse> {
-    const { fee, memo, timeoutHeight } = {
-      fee: {
-        amount: [],
-        gas: (msgs.length * 100000).toString(),
-      },
-      ...options,
+    try {
+      const { fee, memo, timeoutHeight } = {
+        fee: {
+          amount: [],
+          gas: (msgs.length * 100000).toString(),
+        },
+        ...options,
+      }
+      return this.signAndBroadcast(this.address, msgs, fee, memo, timeoutHeight)
+    } catch (err) {
+      throw warnError('IbcSigningClient selfSignAndBroadcast()', err)
     }
-    return this.signAndBroadcast(this.address, msgs, fee, memo, timeoutHeight)
   }
 }

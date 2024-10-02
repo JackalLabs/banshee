@@ -26,6 +26,19 @@ export function deprecated(
 }
 
 /**
+ * Generic warning handler.
+ * @param {string} thing - Name of code block with error. Example: "[ParentContext] functionName()".
+ * @param {any} err - Error to warn.
+ * @returns {any}
+ * @private
+ */
+export function warnError (thing: string, err: any): any {
+  const notice = `Banshee | ${thing}: ${err}`
+  console.warn(notice)
+  return err
+}
+
+/**
  * Set a timer.
  * @param {number} seconds - Duration of timer in ms.
  * @returns {Promise<void>}
