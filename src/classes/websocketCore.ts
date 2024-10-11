@@ -1,7 +1,8 @@
 import type { TPossibleTxEvents } from '@/types'
 import { IIbcEngageBundle, IWebsocketCore } from '@/interfaces'
 
-import { Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
+import { Responses as T34Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
+import { Responses as C38Responses } from '@cosmjs/tendermint-rpc/build/comet38/adaptor'
 import { tidyString } from '@/utils/misc'
 
 export class WebsocketCore implements IWebsocketCore {
@@ -76,7 +77,17 @@ export class WebsocketCore implements IWebsocketCore {
             return
           }
 
-          const ready = Responses.decodeTxEvent(data.result) as T
+          let ready
+          try {
+            ready = T34Responses.decodeTxEvent(data.result) as T
+          } catch (_) {
+            try {
+              ready = C38Responses.decodeTxEvent(data.result) as T
+            } catch (_) {
+              throw new Error('Unable to decode event')
+            }
+          }
+
           this.wsFeeds[`${marker}|${data.result.query}`].push(ready)
           this.wsFeeds[`${marker}|${data.result.query}`] = []
         } catch (err) {
