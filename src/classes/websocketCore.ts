@@ -1,8 +1,8 @@
 import type { TPossibleTxEvents } from '@/types'
 import { IIbcEngageBundle, IWebsocketCore } from '@/interfaces'
 
-import { Responses as T34Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor'
-import { Responses as C38Responses } from '@cosmjs/tendermint-rpc/build/comet38/adaptor'
+import { Responses as T34Responses } from '@cosmjs/tendermint-rpc/build/tendermint34/adaptor/index.js'
+import { Responses as C38Responses } from '@cosmjs/tendermint-rpc/build/comet38/adaptor/index.js'
 import { tidyString } from '@/utils/misc'
 
 export class WebsocketCore implements IWebsocketCore {
