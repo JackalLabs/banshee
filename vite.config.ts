@@ -2,19 +2,16 @@ import { defineConfig } from "vite"
 
 import typescript from "@rollup/plugin-typescript"
 import { resolve } from "path"
-import { copyFileSync } from "fs"
 import { typescriptPaths } from "rollup-plugin-typescript-paths"
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'vite-plugin-dts'
+import {nodePolyfills} from "vite-plugin-node-polyfills";
 
 export default defineConfig({
   base: './',
   plugins: [
     tsconfigPaths(),
     dts({
-      afterBuild: () => {
-        copyFileSync("dist/index.d.ts", "dist/index.d.mts")
-      },
       include: ["src"],
       rollupTypes: true,
       logLevel: 'error'
@@ -42,13 +39,27 @@ export default defineConfig({
     manifest: true,
     minify: false,
     reportCompressedSize: true,
-    lib: {
-      entry: resolve(__dirname, "src/index.ts"),
-      fileName: (format) => `index.${format}.js`,
-      formats: ['es'],
-      name: 'Banshee'
-    },
     rollupOptions: {
+      input: resolve(__dirname, "src/index.ts"),
+      preserveEntrySignatures: 'allow-extension',
+      output: [
+        {
+          dir: './dist',
+          entryFileNames: 'index.cjs.js',
+          format: 'cjs',
+          name: 'Banshee',
+          plugins: []
+        },
+        {
+          dir: './dist',
+          entryFileNames: 'index.esm.js',
+          format: 'esm',
+          name: 'Banshee',
+          plugins: [
+            nodePolyfills({ include: ['buffer', 'util'] })
+          ]
+        }
+      ],
       external: [
         /@cosmjs.*/,
       ],
